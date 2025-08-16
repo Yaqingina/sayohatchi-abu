@@ -4,7 +4,6 @@ import (
 	"context"
 	"go-telegram/services/app/use_case"
 	"go-telegram/services/bot/keyboard"
-	"go-telegram/services/bot/store"
 	"log/slog"
 	"time"
 
@@ -16,7 +15,6 @@ type Handler struct {
 	uc       *use_case.UseCase
 	bot      *tgbotapi.BotAPI
 	keyboard *keyboard.Keyboard
-	store    store.Store
 }
 
 func New(logger *slog.Logger, useCase *use_case.UseCase, bot *tgbotapi.BotAPI) Handler {
@@ -25,7 +23,6 @@ func New(logger *slog.Logger, useCase *use_case.UseCase, bot *tgbotapi.BotAPI) H
 		uc:       useCase,
 		bot:      bot,
 		keyboard: keyboard.New(),
-		store:    store.New(),
 	}
 }
 

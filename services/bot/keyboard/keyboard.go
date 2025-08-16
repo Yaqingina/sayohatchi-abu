@@ -27,9 +27,9 @@ func (k *Keyboard) generateReplyKeyboard(buttons [][]string) tgbotapi.ReplyKeybo
 
 func (k *Keyboard) LanguageKeyboard() tgbotapi.ReplyKeyboardMarkup {
 	buttons := [][]string{
-		{store.ButtonLabels[store.LanguageUzLabel][store.UZ]},
-		{store.ButtonLabels[store.LanguageRuLabel][store.RU]},
-		{store.ButtonLabels[store.LanguageEnLabel][store.EN]},
+		{store.ButtonLabels[store.LabelLanguageUz][store.UZ]},
+		{store.ButtonLabels[store.LabelLanguageRu][store.RU]},
+		{store.ButtonLabels[store.LabelLanguageEn][store.EN]},
 	}
 
 	return k.generateReplyKeyboard(buttons)
@@ -37,12 +37,39 @@ func (k *Keyboard) LanguageKeyboard() tgbotapi.ReplyKeyboardMarkup {
 
 func (k *Keyboard) DashboardKeyboard(lang string) tgbotapi.ReplyKeyboardMarkup {
 	buttons := [][]string{
-		{store.ButtonLabels[store.AdvertisementLabel][lang], store.ButtonLabels[store.AdviceLabel][lang]},
-		{store.ButtonLabels[store.FaqLabel][lang]},
-		{store.ButtonLabels[store.SuggestionLabel][lang]},
-		{store.ButtonLabels[store.YoutubeLabel][lang], store.ButtonLabels[store.TelegramLabel][lang]},
-		{store.ButtonLabels[store.InstagramLabel][lang], store.ButtonLabels[store.FacebookLabel][lang]},
-		{store.ButtonLabels[store.ReturnLabel][lang]},
+		{store.ButtonLabels[store.LabelAdvertisement][lang], store.ButtonLabels[store.LabelAdvice][lang]},
+		{store.ButtonLabels[store.LabelFaq][lang]},
+		{store.ButtonLabels[store.LabelSuggestion][lang]},
+		{store.ButtonLabels[store.LabelYoutube][lang], store.ButtonLabels[store.LabelTelegram][lang]},
+		{store.ButtonLabels[store.LabelInstagram][lang], store.ButtonLabels[store.LabelFacebook][lang]},
+		{store.ButtonLabels[store.LabelReturn][lang]},
+	}
+
+	return k.generateReplyKeyboard(buttons)
+}
+
+func (k *Keyboard) AdvertisementKeyboard(lang string) tgbotapi.ReplyKeyboardMarkup {
+	buttons := [][]string{
+		{store.ButtonLabels[store.LabelPrice][lang], store.ButtonLabels[store.LabelStatistics][lang]},
+		{store.ButtonLabels[store.LabelReturn][lang]},
+	}
+
+	return k.generateReplyKeyboard(buttons)
+}
+
+func (k *Keyboard) AdviceKeyboard(lang string) tgbotapi.ReplyKeyboardMarkup {
+	buttons := [][]string{
+		{store.ButtonLabels[store.LabelFree][lang], store.ButtonLabels[store.LabelPaid][lang]},
+		{store.ButtonLabels[store.LabelReturn][lang]},
+	}
+
+	return k.generateReplyKeyboard(buttons)
+}
+
+func (k *Keyboard) SuggestionKeyboard(lang string) tgbotapi.ReplyKeyboardMarkup {
+	buttons := [][]string{
+		{store.ButtonLabels[store.LabelPhone][lang], store.ButtonLabels[store.LabelTelegram][lang]},
+		{store.ButtonLabels[store.LabelReturn][lang]},
 	}
 
 	return k.generateReplyKeyboard(buttons)

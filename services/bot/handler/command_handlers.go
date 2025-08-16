@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"go-telegram/services/app/models"
+	"go-telegram/services/bot/store"
 	"log/slog"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -17,35 +18,51 @@ func (h *Handler) handleCommands(ctx context.Context, update tgbotapi.Update) {
 }
 
 func (h *Handler) startCommand(ctx context.Context, update tgbotapi.Update) {
-	chatID := update.Message.Chat.ID
+	userID := update.Message.Chat.ID
 
 	text := "Tilni tanlang\nВыберите язык\nChoose language"
-	user, err := h.uc.User.GetByID(ctx, chatID)
+	user, err := h.uc.User.GetByID(ctx, userID)
 	if err != nil {
-		h.log.Error("failed to fetch user", slog.Int64("user_id", chatID), slog.Any("error", err))
-		_, _ = h.bot.Send(tgbotapi.NewMessage(chatID, err.Error()))
+		h.log.Error("failed to fetch user", slog.Int64("user_id", userID), slog.Any("error", err))
+		_, _ = h.bot.Send(tgbotapi.NewMessage(userID, err.Error()))
 		return
 	}
 
 	if user != nil {
-		_, _ = h.bot.Send(tgbotapi.NewMessage(chatID, "Botga xush kelibsiz"))
+		err = h.uc.User.UpdateState(ctx, userID, store.StateLanguage)
+		if err != nil {
+			text = "Serverda xatolik yuz berdi"
+			_, _ = h.bot.Send(tgbotapi.NewMessage(userID, text))
+			return
+		}
+
+		text = "Botga xush kelibsiz"
+		msg := tgbotapi.NewMessage(userID, text)
+
+		btns := h.keyboard.LanguageKeyboard()
+		btns.ResizeKeyboard = true
+		btns.OneTimeKeyboard = true
+
+		msg.ReplyMarkup = btns
+		_, _ = h.bot.Send(msg)
 		return
 	}
 
 	newUser := models.User{
-		ID:        chatID,
+		ID:        userID,
 		FirstName: update.Message.From.FirstName,
 		LastName:  update.Message.From.LastName,
 		UserName:  update.Message.From.LastName,
+		State:     store.StateLanguage,
 	}
 
-	if err := h.uc.Create(context.Background(), newUser); err != nil {
-		log.Error("failed to create user", slog.Int64("user_id", chatID), slog.Any("error", err))
-		_, _ = h.bot.Send(tgbotapi.NewMessage(chatID, err.Error()))
+	if err := h.uc.Create(ctx, newUser); err != nil {
+		log.Error("failed to create user", slog.Int64("user_id", userID), slog.Any("error", err))
+		_, _ = h.bot.Send(tgbotapi.NewMessage(userID, err.Error()))
 		return
 	}
 
-	msg := tgbotapi.NewMessage(chatID, text)
+	msg := tgbotapi.NewMessage(userID, text)
 
 	btns := h.keyboard.LanguageKeyboard()
 	btns.ResizeKeyboard = true
